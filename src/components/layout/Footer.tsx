@@ -1,6 +1,15 @@
+
+'use client';
+
 import { Heart } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/admin')) {
+    return null; // Don't render public footer on admin pages
+  }
+
   const currentYear = new Date().getFullYear();
   return (
     <footer className="border-t border-border/40 bg-background">
