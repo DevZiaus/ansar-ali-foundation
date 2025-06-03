@@ -33,7 +33,7 @@ export default function HomePage() {
       <section className="w-full bg-gradient-to-r from-primary/10 via-background to-accent/10 py-20 md:py-32 rounded-lg shadow-lg">
         <div className="container mx-auto text-center px-4">
           <h1 className="text-4xl font-headline font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-            Welcome to <span className="text-primary">AnsarConnect</span>
+            Welcome to <span className="text-primary">Ansar Ali Foundation</span>
           </h1>
           <p className="mt-6 max-w-3xl mx-auto text-lg text-muted-foreground sm:text-xl">
             Empowering Communities, Inspiring Change. Join us in making a difference.
