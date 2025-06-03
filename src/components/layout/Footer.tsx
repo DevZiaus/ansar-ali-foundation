@@ -21,14 +21,14 @@ export function Footer() {
     <footer className="border-t border-border/40 bg-background">
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 text-center text-lg text-muted-foreground">
         <p className="flex items-center justify-center">
-          Made with <Heart className="w-4 h-4 mx-1 text-primary" /> by <a className='text-[#0095da] hover:text-[#e68324] transition-colors duration-300' href="https://devziaus.xyz" target="_blank" rel="noopener noreferrer">DevZiaus</a>
+          Made with <Heart className="w-4 h-4 mx-1 text-primary" /> by &nbsp; <a className='text-[#0095da] hover:text-[#e68324] transition-colors duration-300' href="https://devziaus.xyz" target="_blank" rel="noopener noreferrer">DevZiaus</a>
         </p>
         {/* Render copyright with year only when currentYear is available */}
         {currentYear !== null ? (
-          <p>&copy; {currentYear} AnsarConnect. All rights reserved.</p>
+          <p>&copy; {currentYear} Ansar Ali Foundation. All rights reserved.</p>
         ) : (
           // Fallback or placeholder if currentYear is not yet set
-          <p>&copy; AnsarConnect. All rights reserved.</p>
+          <p>&copy; Ansar Ali Foundation. All rights reserved.</p>
         )}
       </div>
     </footer>
