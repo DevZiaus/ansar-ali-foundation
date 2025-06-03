@@ -77,7 +77,7 @@ export default function DonatePage() {
                   </div>
                 </div>
               </DialogTrigger>
-              <p className="text-sm text-muted-foreground mt-2 text-center">Scan this QR code using your preferred mobile banking app. Click to enlarge.</p>
+              <p className="text-sm text-muted-foreground mt-2 text-center">Scan this QR code using your preferred Banking or mobile banking app. Click to enlarge.</p>
             </CardContent>
           </Card>
 
@@ -85,7 +85,7 @@ export default function DonatePage() {
             <DialogHeader>
               <DialogTitle className="text-center font-headline">Donation QR Code</DialogTitle>
               <DialogDescription className="text-center text-muted-foreground">
-                Scan with your mobile banking app.
+                Scan with your Banking or mobile banking app.
               </DialogDescription>
             </DialogHeader>
             <div className="mt-4 flex justify-center">
