@@ -22,7 +22,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 text-center text-lg text-muted-foreground">
         <p className="flex items-center justify-center">
           Made with <Heart className="w-4 h-4 mx-1 text-primary" />
-          {' by '}
+          by &nbsp;
           <a className='text-[#0095da] hover:text-[#e68324] transition-colors duration-300' href="https://devziaus.xyz" target="_blank" rel="noopener noreferrer">DevZiaus</a>
         </p>
         {currentYear !== null ? (
