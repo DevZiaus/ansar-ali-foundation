@@ -1,5 +1,3 @@
-# Firebase Studio
-
-This is a NextJS starter in Firebase Studio.
-
-To get started, take a look at src/app/page.tsx.
+# Ansar Ali Foundation 
+## A non profit Cahrity website
+Used Nextjs, Tailwind CSS ShadcnUI
