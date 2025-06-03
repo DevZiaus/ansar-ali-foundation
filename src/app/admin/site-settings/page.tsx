@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { PageTitle } from '@/components/shared/PageTitle';
 import { Upload } from 'lucide-react';
+import Image from 'next/image'; // Import next/image
 
 // Helper function to convert HSL string to object and vice-versa
 const parseHslString = (hslString: string): { h: number; s: number; l: number } => {
@@ -39,7 +40,7 @@ export default function SiteSettingsPage() {
 
   // Load existing settings from localStorage (or API in real app)
   useEffect(() => {
-    setSiteTitle(localStorage.getItem('siteTitle') || 'AnsarConnect - Ansar Ali Foundation');
+    setSiteTitle(localStorage.getItem('siteTitle') || 'Ansar Ali Foundation');
     const storedBg = localStorage.getItem('backgroundColor');
     if (storedBg) setBackgroundColor(parseHslString(storedBg));
     const storedFg = localStorage.getItem('foregroundColor');
@@ -49,8 +50,7 @@ export default function SiteSettingsPage() {
     const storedAccent = localStorage.getItem('accentColor');
     if (storedAccent) setAccentColor(parseHslString(storedAccent));
     
-    // For logo, you'd fetch URL or use a default
-    setLogoPreview(localStorage.getItem('logoPreview') || 'https://placehold.co/150x50.png?text=YourLogo');
+    setLogoPreview(localStorage.getItem('logoPreview') || 'https://placehold.co/150x40.png');
   }, []);
 
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,18 +80,14 @@ export default function SiteSettingsPage() {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // In a real app, upload logoFile to storage (e.g., Cloudinary, Firebase Storage)
-    // and save all settings to a database.
     localStorage.setItem('siteTitle', siteTitle);
-    if (logoPreview) localStorage.setItem('logoPreview', logoPreview); // Store preview URL or uploaded URL
+    if (logoPreview) localStorage.setItem('logoPreview', logoPreview); 
     
     localStorage.setItem('backgroundColor', formatHslToString(backgroundColor));
     localStorage.setItem('foregroundColor', formatHslToString(foregroundColor));
     localStorage.setItem('primaryColor', formatHslToString(primaryColor));
     localStorage.setItem('accentColor', formatHslToString(accentColor));
 
-    // This would dynamically update globals.css or similar in a full app
-    // For demo, we just show a success message.
     document.documentElement.style.setProperty('--background', formatHslToString(backgroundColor));
     document.documentElement.style.setProperty('--foreground', formatHslToString(foregroundColor));
     document.documentElement.style.setProperty('--primary', formatHslToString(primaryColor));
@@ -135,14 +131,19 @@ export default function SiteSettingsPage() {
                   id="siteTitle"
                   value={siteTitle}
                   onChange={(e) => setSiteTitle(e.target.value)}
-                  placeholder="Your Awesome Foundation"
+                  placeholder="Ansar Ali Foundation"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="logo">Website Logo</Label>
                 {logoPreview && (
-                  <div className="my-2">
-                    <img src={logoPreview} alt="Logo preview" className="h-12 max-w-xs object-contain border p-1 rounded bg-muted/20" data-ai-hint="website logo"/>
+                  <div className="my-2 relative w-[150px] h-[40px] border p-1 rounded bg-muted/20">
+                    <Image 
+                        src={logoPreview} 
+                        alt="Logo preview" 
+                        layout="fill"
+                        objectFit="contain"
+                        data-ai-hint="website logo"/>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
