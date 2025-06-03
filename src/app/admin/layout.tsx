@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -27,56 +28,58 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { data: session, status } = useSession();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    const authStatus = localStorage.getItem('isAdminAuthenticated') === 'true';
-    setIsAuthenticated(authStatus);
-    if (!authStatus && pathname !== '/admin/login') {
+  }, []);
+
+  useEffect(() => {
+    if (isClient && status === 'unauthenticated' && pathname !== '/admin/login') {
       router.replace('/admin/login');
     }
-  }, [router, pathname]);
+    // If authenticated and on login page, redirect to admin dashboard
+    if (isClient && status === 'authenticated' && pathname === '/admin/login') {
+      router.replace('/admin');
+    }
+  }, [status, pathname, router, isClient]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('isAdminAuthenticated');
-    setIsAuthenticated(false);
-    router.push('/admin/login');
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/admin/login' });
   };
 
-  if (!isClient || (!isAuthenticated && pathname !== '/admin/login')) {
-    // Display a loading state or null while checking auth, or if redirecting
-    // For login page, we don't want to show the admin layout
-    if (pathname === '/admin/login' && !isAuthenticated) {
-        return <>{children}</>;
-    }
+  if (!isClient || status === 'loading') {
     return (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center min-h-screen bg-background">
             <ShieldCheck className="w-12 h-12 animate-spin text-primary" />
+            <p className="ml-2 text-muted-foreground">Loading admin area...</p>
         </div>
     );
   }
-
-  if (pathname === '/admin/login' && isAuthenticated) {
-     // If authenticated and on login page, redirect to admin dashboard
-     router.replace('/admin');
-     return (
-        <div className="flex items-center justify-center min-h-screen">
-            <ShieldCheck className="w-12 h-12 animate-spin text-primary" />
-        </div>
-     );
+  
+  // If on login page, and not authenticated yet, render children (login page)
+  if (pathname === '/admin/login' && status !== 'authenticated') {
+    return <>{children}</>;
   }
   
-  if (pathname === '/admin/login') {
-    return <>{children}</>;
+  // If not authenticated and not on login page (should be caught by useEffect, but as safeguard)
+  if (status !== 'authenticated') {
+     // This might briefly show if redirection is slow, or if useEffect hasn't run.
+     // The useEffect should handle redirecting to /admin/login.
+    return (
+        <div className="flex items-center justify-center min-h-screen bg-background">
+            <ShieldCheck className="w-12 h-12 animate-spin text-primary" />
+             <p className="ml-2 text-muted-foreground">Redirecting...</p>
+        </div>
+    );
   }
 
 
   const AdminNavLinks = ({isMobile = false}: {isMobile?: boolean}) => (
     <nav className={cn("flex flex-col gap-2", isMobile ? "p-4" : "p-2")}>
       {navItems.map((item) => (
-        <Link key={item.href} href={item.href} legacyBehavior>
+        <Link key={item.href} href={item.href} legacyBehavior passHref>
           <a
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
@@ -98,13 +101,12 @@ export default function AdminLayout({
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <div className="flex items-center gap-2"> {/* Wrapper for logo and admin text */}
-              <AppLogo /> {/* AppLogo is a Link to / */}
-              {/* Link for "Admin" text, linking to /admin */}
-              <Link href="/admin" className="text-sm text-muted-foreground font-semibold hover:text-primary transition-colors">
-                Admin
-              </Link>
-            </div>
+             <div className="flex items-center gap-2">
+               <AppLogo />
+               <Link href="/admin" className="text-sm text-muted-foreground font-semibold hover:text-primary transition-colors">
+                  Admin
+               </Link>
+             </div>
           </div>
           <div className="flex-1">
             <AdminNavLinks />
@@ -138,14 +140,14 @@ export default function AdminLayout({
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
                 <Avatar>
-                  <AvatarImage src="https://placehold.co/40x40.png" alt="Admin" data-ai-hint="person avatar" />
-                  <AvatarFallback>AD</AvatarFallback>
+                  <AvatarImage src={session?.user?.image || "https://placehold.co/40x40.png"} alt={session?.user?.name || "Admin"} data-ai-hint="person avatar" />
+                  <AvatarFallback>{session?.user?.name?.charAt(0).toUpperCase() || 'A'}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Admin Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{session?.user?.name || 'Admin Account'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push('/')}>View Public Site</DropdownMenuItem>
               <DropdownMenuSeparator />
